@@ -203,11 +203,13 @@ type
     FOldCmbMatchWndProc: TWndMethod;
     FOldTxtReplaceWndProc: TWndMethod;
     FOldTxtFilterWndProc: TWndMethod;
+    FProgressTimer: TTimer;
     // Error tracking per listview item: index -> error string
     FPreviewErrors: TDictionary<Integer, string>;
 
     MAX_FILES: Integer;
 
+    procedure ProgressTimerTick(Sender: TObject);
     procedure SetRenameFolders(Value: Boolean);
     function PreviewNeedsUpdate: Boolean;
     procedure ResetPreviewNeedsUpdate;
@@ -558,6 +560,11 @@ begin
 
   if (FActivePath = '') or not TDirectory.Exists(FActivePath) then
     FActivePath := GetEnvironmentVariable('SystemDrive') + '\';
+
+  FProgressTimer := TTimer.Create(Self);
+  FProgressTimer.Enabled := False;
+  FProgressTimer.Interval := 50;
+  FProgressTimer.OnTimer := ProgressTimerTick;
 
   ShellTree.Path := FActivePath;
   txtPath.Text := FActivePath;
@@ -1072,7 +1079,15 @@ begin
       if cbModifierI.Checked then Include(Options, roIgnoreCase);
       if cbModifierX.Checked then Include(Options, roIgnorePatternSpace);
 
-      Regex := TRegEx.Create(cmbMatch.Text, Options);
+      try
+        Regex := TRegEx.Create(cmbMatch.Text, Options);
+      except
+        on E: Exception do
+        begin
+          FValidMatch := False;
+          Exit;
+        end;
+      end;
 
       // Auto numbering
       NumInc := 0;
@@ -1565,41 +1580,42 @@ function TfrmMain.RegExReplaceCount(const AInput, APattern, AReplacement: string
 var
   Regex: TRegEx;
   M: TMatch;
-  Offset: Integer;
   ReplaceCount: Integer;
+  Replacement: string;
+  Builder: string;
+  LastEnd: Integer;
 begin
+  Regex := TRegEx.Create(APattern, AOptions);
+
   if ACount = -1 then
   begin
-    // Replace all
-    Regex := TRegEx.Create(APattern, AOptions);
     Result := Regex.Replace(AInput, AReplacement);
-  end
-  else
-  begin
-    // Replace first N matches
-    Regex := TRegEx.Create(APattern, AOptions);
-    Result := AInput;
-    M := Regex.Match(Result);
-    ReplaceCount := 0;
-    Offset := 0;
-
-    while M.Success and (ReplaceCount < ACount) do
-    begin
-      var Replacement := TRegEx.Create(APattern, AOptions).Replace(
-        Copy(Result, M.Index + Offset, M.Length), AReplacement);
-
-      Result := Copy(Result, 1, M.Index - 1 + Offset) + Replacement +
-        Copy(Result, M.Index + M.Length + Offset, MaxInt);
-
-      Inc(ReplaceCount);
-      if ReplaceCount < ACount then
-      begin
-        Offset := M.Index - 1 + Length(Replacement);
-        var Remaining := Copy(Result, Offset + 1, MaxInt);
-        M := Regex.Match(Remaining);
-      end;
-    end;
+    Exit;
   end;
+
+  // Replace first N matches by walking the input and rebuilding
+  M := Regex.Match(AInput);
+  ReplaceCount := 0;
+  Builder := '';
+  LastEnd := 1; // 1-based position after last consumed character
+
+  while M.Success and (ReplaceCount < ACount) do
+  begin
+    // Append text before match
+    Builder := Builder + Copy(AInput, LastEnd, M.Index - LastEnd);
+
+    // Expand replacement pattern using the match's captured groups
+    Replacement := M.Result(AReplacement);
+
+    Builder := Builder + Replacement;
+    LastEnd := M.Index + M.Length;
+    Inc(ReplaceCount);
+    M := M.NextMatch;
+  end;
+
+  // Append remainder
+  Builder := Builder + Copy(AInput, LastEnd, MaxInt);
+  Result := Builder;
 end;
 
 class function TfrmMain.SequenceNumberToLetter(ANum: Integer): string;
@@ -2766,15 +2782,14 @@ begin
     itmOutputMoveTo.Checked, itmOutputCopyTo.Checked, itmOutputBackupTo.Checked,
     itmOptionsRenameSelectedRows.Checked);
   FRenameThread.OnTerminate := OnRenameThreadTerminate;
+  FProgressTimer.Enabled := True;
   FRenameThread.Start;
+end;
 
-  // Poll progress with a timer-like approach via Application.ProcessMessages
-  while not FRenameThread.Finished do
-  begin
+procedure TfrmMain.ProgressTimerTick(Sender: TObject);
+begin
+  if Assigned(FRenameThread) then
     ProgressBar.Position := FRenameThread.Progress;
-    Application.ProcessMessages;
-    Sleep(50);
-  end;
 end;
 
 procedure TfrmMain.btnCancelClick(Sender: TObject);
@@ -2795,6 +2810,8 @@ var
   CountTotal: Integer;
   sErr, sWas: string;
 begin
+  FProgressTimer.Enabled := False;
+
   // Update stats
   FCountFilesRenamed := FCountFilesRenamed + FRenameThread.CountSuccess;
 
