@@ -29,7 +29,19 @@ implementation
 {$R *.dfm}
 
 procedure TdlgAbout.FormCreate(Sender: TObject);
+var
+  H: HICON;
 begin
+  imgLogo.Stretch := True;
+  H := LoadImage(HInstance, 'MAINICON', IMAGE_ICON, 48, 48, LR_DEFAULTCOLOR);
+  if H <> 0 then
+    imgLogo.Picture.Icon.Handle := H
+  else
+  begin
+    // Fallback: use Application.Icon
+    if not Application.Icon.Empty then
+      imgLogo.Picture.Icon.Assign(Application.Icon);
+  end;
   lblHeader.Caption := 'RegExRenamer v1.0' + sLineBreak +
     'Delphi port of RegexRenamer by Xiperware' + sLineBreak +
     'GNU General Public License';
