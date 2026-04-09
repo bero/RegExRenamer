@@ -1,4 +1,6 @@
-unit RegExRenamer.FrmMain;
+﻿unit RegExRenamer.FrmMain;
+
+{$WARN SYMBOL_PLATFORM OFF}
 
 interface
 
@@ -206,7 +208,6 @@ type
 
     MAX_FILES: Integer;
 
-    procedure SetEnableUpdates(Value: Boolean);
     procedure SetRenameFolders(Value: Boolean);
     function PreviewNeedsUpdate: Boolean;
     procedure ResetPreviewNeedsUpdate;
@@ -255,7 +256,6 @@ type
 
     // Rename thread
     procedure OnRenameThreadTerminate(Sender: TObject);
-    procedure OnRenameProgress(Sender: TObject);
   end;
 
 var
@@ -598,13 +598,6 @@ begin
     Key := 0;
     btnCancelClick(btnCancel);
   end;
-end;
-
-procedure TfrmMain.SetEnableUpdates(Value: Boolean);
-begin
-  if Value and Assigned(FRenameThread) then
-    Exit;
-  FEnableUpdates := Value;
 end;
 
 procedure TfrmMain.SetRenameFolders(Value: Boolean);
@@ -1082,14 +1075,11 @@ begin
       Regex := TRegEx.Create(cmbMatch.Text, Options);
 
       // Auto numbering
-      NumCurrent := 0;
       NumInc := 0;
       NumStart := 0;
       NumReset := 0;
       NumFormatted := '';
       DoingAutoNum := False;
-      DoingAutoNumLetter := False;
-      DoingAutoNumLetterUpper := False;
 
       if FValidNumber and ContainsAutoNum(txtReplace.Text) then
         DoingAutoNum := True;
@@ -2795,10 +2785,6 @@ begin
     FRenameThread.Terminate;
 end;
 
-procedure TfrmMain.OnRenameProgress(Sender: TObject);
-begin
-  ProgressBar.Position := FRenameThread.Progress;
-end;
 
 procedure TfrmMain.OnRenameThreadTerminate(Sender: TObject);
 var
