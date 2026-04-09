@@ -14,6 +14,7 @@ object frmMain: TfrmMain
   Font.Style = []
   KeyPreview = True
   Position = poDefault
+  ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -40,6 +41,7 @@ object frmMain: TfrmMain
       Left = 0
       Top = 0
       Caption = 'Change Case'
+      Hint = 'Apply case change to renamed filenames (right-click to reset)'
       DropdownMenu = pmChangeCase
       Style = tbsDropDown
     end
@@ -53,6 +55,7 @@ object frmMain: TfrmMain
       Left = 100
       Top = 0
       Caption = 'Numbering'
+      Hint = 'Configure auto-numbering ($# in replacement pattern)'
       DropdownMenu = pmNumbering
       Style = tbsDropDown
     end
@@ -66,6 +69,7 @@ object frmMain: TfrmMain
       Left = 200
       Top = 0
       Caption = 'Move / Copy'
+      Hint = 'Rename in place, or move/copy/backup to another folder'
       DropdownMenu = pmMoveCopy
       Style = tbsDropDown
     end
@@ -111,6 +115,7 @@ object frmMain: TfrmMain
         Top = 4
         Width = 260
         Height = 21
+        Hint = 'Type a path and press Enter to navigate'
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 0
         OnKeyDown = txtPathKeyDown
@@ -122,6 +127,7 @@ object frmMain: TfrmMain
         Height = 23
         Anchors = [akTop, akRight]
         Caption = '...'
+        Hint = 'Browse for folder'
         TabOrder = 1
         OnClick = btnNetworkClick
       end
@@ -190,6 +196,7 @@ object frmMain: TfrmMain
         Top = 5
         Width = 305
         Height = 21
+        Hint = 'Enter regex pattern (Shift+Right-click for helpers)'
         TabOrder = 0
         OnChange = cmbMatchChange
         OnKeyDown = cmbMatchKeyDown
@@ -200,6 +207,7 @@ object frmMain: TfrmMain
         Top = 33
         Width = 305
         Height = 21
+        Hint = 'Replacement pattern ($1, $#, etc.)'
         TabOrder = 1
         OnChange = txtReplaceChange
         OnKeyDown = txtReplaceKeyDown
@@ -210,6 +218,7 @@ object frmMain: TfrmMain
         Width = 30
         Height = 17
         Caption = '/i'
+        Hint = 'Ignore case'
         TabOrder = 2
         OnClick = cbModifierClick
       end
@@ -219,6 +228,7 @@ object frmMain: TfrmMain
         Width = 30
         Height = 17
         Caption = '/g'
+        Hint = 'Global - replace all matches (not just the first)'
         TabOrder = 3
         OnClick = cbModifierClick
       end
@@ -228,6 +238,7 @@ object frmMain: TfrmMain
         Width = 30
         Height = 17
         Caption = '/x'
+        Hint = 'Extended - ignore whitespace in pattern'
         TabOrder = 4
         OnClick = cbModifierClick
       end
@@ -243,6 +254,7 @@ object frmMain: TfrmMain
           Top = 20
           Width = 140
           Height = 21
+          Hint = 'Filter files by pattern (press Enter to apply)'
           TabOrder = 0
           Text = '*.*'
           OnChange = txtFilterChange
@@ -254,6 +266,7 @@ object frmMain: TfrmMain
           Width = 50
           Height = 17
           Caption = 'Glob'
+          Hint = 'Use glob wildcards (* and ?)'
           Checked = True
           TabOrder = 1
           TabStop = True
@@ -265,6 +278,7 @@ object frmMain: TfrmMain
           Width = 55
           Height = 17
           Caption = 'Regex'
+          Hint = 'Use regular expression for filtering'
           TabOrder = 2
           OnClick = rbFilterTypeClick
         end
@@ -274,6 +288,7 @@ object frmMain: TfrmMain
           Width = 60
           Height = 17
           Caption = 'Exclude'
+          Hint = 'Invert filter - show files that do NOT match'
           TabOrder = 3
           OnClick = cbFilterExcludeClick
         end
@@ -387,6 +402,7 @@ object frmMain: TfrmMain
         Height = 30
         Anchors = [akTop, akRight]
         Caption = #9660
+        Hint = 'Switch between renaming files or folders'
         Flat = True
         OnClick = btnRenameDropClick
       end
@@ -397,6 +413,7 @@ object frmMain: TfrmMain
         Height = 30
         Anchors = [akTop, akRight]
         Caption = '&Rename'
+        Hint = 'Start rename operation (Ctrl+R)'
         TabOrder = 0
         OnClick = btnRenameClick
       end

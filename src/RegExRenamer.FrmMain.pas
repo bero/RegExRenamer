@@ -558,6 +558,7 @@ begin
   FProgressTimer.Interval := 50;
   FProgressTimer.OnTimer := ProgressTimerTick;
 
+
   ShellTree.Path := FActivePath;
   txtPath.Text := FActivePath;
   UpdateFileList;
