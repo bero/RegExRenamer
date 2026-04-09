@@ -94,7 +94,7 @@ type
     btnCancel: TButton;
     ProgressBar: TProgressBar;
     btnOptions: TButton;
-    btnHelp: TButton;
+    btnAbout: TButton;
     ilFiles: TImageList;
     pmChangeCase: TPopupMenu;
     itmChangeCaseNoChange: TMenuItem;

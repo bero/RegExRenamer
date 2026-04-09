@@ -441,22 +441,23 @@ object frmMain: TfrmMain
       object btnOptions: TButton
         Left = 100
         Top = 4
-        Width = 70
-        Height = 22
+        Width = 75
+        Height = 25
         Caption = 'Options'
+        Hint = 'Application options'
         DropDownMenu = pmOptions
         Style = bsSplitButton
         TabOrder = 3
       end
-      object btnHelp: TButton
-        Left = 175
+      object btnAbout: TButton
+        Left = 180
         Top = 4
-        Width = 55
-        Height = 22
-        Caption = 'Help'
-        DropDownMenu = pmHelp
-        Style = bsSplitButton
+        Width = 65
+        Height = 25
+        Caption = 'About'
+        Hint = 'About RegExRenamer'
         TabOrder = 4
+        OnClick = itmHelpAboutClick
       end
     end
   end

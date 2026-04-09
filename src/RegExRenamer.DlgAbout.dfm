@@ -3,7 +3,7 @@ object dlgAbout: TdlgAbout
   Top = 0
   BorderStyle = bsDialog
   Caption = 'About RegExRenamer'
-  ClientHeight = 240
+  ClientHeight = 260
   ClientWidth = 350
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -65,9 +65,24 @@ object dlgAbout: TdlgAbout
     ParentFont = False
     OnClick = lblEmailClick
   end
+  object lblGitHub: TLabel
+    Left = 12
+    Top = 124
+    Width = 230
+    Height = 13
+    Cursor = crHandPoint
+    Caption = 'https://github.com/bero/RegExRenamer'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlue
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsUnderline]
+    ParentFont = False
+    OnClick = lblGitHubClick
+  end
   object lblStats: TLabel
     Left = 12
-    Top = 136
+    Top = 148
     Width = 326
     Height = 40
     AutoSize = False
@@ -75,7 +90,7 @@ object dlgAbout: TdlgAbout
   end
   object btnOK: TButton
     Left = 137
-    Top = 200
+    Top = 220
     Width = 75
     Height = 25
     Caption = 'OK'

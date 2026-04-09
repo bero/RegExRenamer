@@ -12,11 +12,13 @@ type
     lblHeader: TLabel;
     lblHomepage: TLabel;
     lblEmail: TLabel;
+    lblGitHub: TLabel;
     lblStats: TLabel;
     btnOK: TButton;
     Bevel1: TBevel;
     procedure lblHomepageClick(Sender: TObject);
     procedure lblEmailClick(Sender: TObject);
+    procedure lblGitHubClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   public
     procedure SetStats(ACountProgLaunches, ACountFilesRenamed: Integer);
@@ -52,6 +54,11 @@ end;
 procedure TdlgAbout.lblEmailClick(Sender: TObject);
 begin
   ShellExecute(Handle, 'open', 'mailto:xiperware@gmail.com', nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TdlgAbout.lblGitHubClick(Sender: TObject);
+begin
+  ShellExecute(Handle, 'open', 'https://github.com/bero/RegExRenamer', nil, nil, SW_SHOWNORMAL);
 end;
 
 end.
