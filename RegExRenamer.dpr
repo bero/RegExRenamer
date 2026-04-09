@@ -1,4 +1,4 @@
-program RegExRenamer;
+﻿program RegExRenamer;
 
 uses
   Vcl.Forms,

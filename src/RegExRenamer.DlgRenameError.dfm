@@ -13,6 +13,9 @@ object dlgRenameError: TdlgRenameError
   Font.Style = []
   Position = poMainFormCenter
   OnCreate = FormCreate
+  DesignSize = (
+    650
+    350)
   TextHeight = 13
   object imgError: TImage
     Left = 12
@@ -40,7 +43,6 @@ object dlgRenameError: TdlgRenameError
         Width = 180
       end
       item
-        Caption = ''
         Width = 30
       end
       item
@@ -48,16 +50,15 @@ object dlgRenameError: TdlgRenameError
         Width = 180
       end
       item
-        Caption = ''
         Width = 10
       end
       item
         Caption = 'Error'
         Width = 200
       end>
+    GridLines = True
     ReadOnly = True
     RowSelect = True
-    GridLines = True
     TabOrder = 0
     ViewStyle = vsReport
     OnEnter = lvwErrorsEnter
@@ -70,8 +71,7 @@ object dlgRenameError: TdlgRenameError
     Anchors = [akBottom]
     Caption = 'OK'
     Default = True
-    ModalResult = mrOk
+    ModalResult = 1
     TabOrder = 1
-    OnClick = btnOKClick
   end
 end

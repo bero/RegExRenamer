@@ -37,7 +37,6 @@ type
     FCountSuccess: Integer;
     FCountErrors: Integer;
     FErrors: TList<TPair<string, TPair<string, string>>>; // old, new, error
-    procedure DoProgress;
   protected
     procedure Execute; override;
   public
@@ -391,11 +390,6 @@ begin
   inherited;
 end;
 
-procedure TRenameThread.DoProgress;
-begin
-  // Called via Synchronize - main form reads FProgress
-end;
-
 procedure TRenameThread.Execute;
 var
   I, FilesToRename: Integer;
@@ -452,9 +446,8 @@ begin
     if FRenameSelectedOnly and not Item.Selected then
       Continue;
 
-    // Update progress
+    // Update progress (read by FProgressTimer on main thread)
     FProgress := Round((FilesRenamed / FilesToRename) * 100);
-    Synchronize(DoProgress);
     FilesRenamed := FilesRenamed + 1;
 
     // Build new path
@@ -512,7 +505,6 @@ begin
   end;
 
   FProgress := 100;
-  Synchronize(DoProgress);
 end;
 
 { TfrmMain }
@@ -582,6 +574,15 @@ end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  // Wait for rename thread to finish before destroying shared data
+  if Assigned(FRenameThread) then
+  begin
+    FProgressTimer.Enabled := False;
+    FRenameThread.OnTerminate := nil;
+    FRenameThread.Terminate;
+    FRenameThread.WaitFor;
+    FreeAndNil(FRenameThread);
+  end;
   SaveSettings;
 end;
 
@@ -1008,7 +1009,12 @@ begin
     for I := 0 to FActiveFiles.Count - 1 do
     begin
       if I >= MAX_FILES then
+      begin
+        // Trim excess items like C# version
+        while FActiveFiles.Count > MAX_FILES do
+          FActiveFiles.Delete(FActiveFiles.Count - 1);
         Break;
+      end;
 
       Item := lvFiles.Items.Add;
       Item.Caption := '';
@@ -1026,12 +1032,23 @@ begin
       else
       begin
         Ext := LowerCase(FActiveFiles[I].Extension);
-        if not FIconCache.ContainsKey(Ext) then
+        if Ext = '.lnk' then
         begin
-          ImgIdx := GetFileIcon(FActiveFiles[I].Fullpath, Ext <> '.lnk');
+          // Shortcuts can have unique icons per file, don't cache by extension
+          Ext := '.lnk.' + IntToStr(FIconCache.Count);
+          ImgIdx := GetFileIcon(FActiveFiles[I].Fullpath, False);
           FIconCache.Add(Ext, ImgIdx);
+          Item.ImageIndex := ImgIdx;
+        end
+        else
+        begin
+          if not FIconCache.ContainsKey(Ext) then
+          begin
+            ImgIdx := GetFileIcon(FActiveFiles[I].Fullpath, True);
+            FIconCache.Add(Ext, ImgIdx);
+          end;
+          Item.ImageIndex := FIconCache[Ext];
         end;
-        Item.ImageIndex := FIconCache[Ext];
       end;
     end;
 
@@ -1085,6 +1102,7 @@ begin
         on E: Exception do
         begin
           FValidMatch := False;
+          Screen.Cursor := crDefault;
           Exit;
         end;
       end;
@@ -1669,10 +1687,10 @@ begin
       begin
         if CapNext and Result[I].IsLetter then
         begin
-          Result[I] := UpCase(Result[I]);
+          Result[I] := Result[I].ToUpper;
           CapNext := False;
         end
-        else if Result[I] = ' ' then
+        else if not Result[I].IsLetterOrDigit then
           CapNext := True;
       end;
     end;

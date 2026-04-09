@@ -1,4 +1,4 @@
-unit RegExRenamer.DlgRenameError;
+﻿unit RegExRenamer.DlgRenameError;
 
 interface
 
@@ -13,7 +13,6 @@ type
     lblMessage: TLabel;
     lvwErrors: TListView;
     btnOK: TButton;
-    procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure lvwErrorsEnter(Sender: TObject);
   private
@@ -62,11 +61,6 @@ end;
 procedure TdlgRenameError.SetMessage(const AMessage: string);
 begin
   lblMessage.Caption := AMessage;
-end;
-
-procedure TdlgRenameError.btnOKClick(Sender: TObject);
-begin
-  Close;
 end;
 
 procedure TdlgRenameError.lvwErrorsEnter(Sender: TObject);

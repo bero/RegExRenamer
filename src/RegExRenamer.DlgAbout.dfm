@@ -38,7 +38,7 @@ object dlgAbout: TdlgAbout
   object lblHomepage: TLabel
     Left = 12
     Top = 84
-    Width = 200
+    Width = 186
     Height = 13
     Cursor = crHandPoint
     Caption = 'http://regexrenamer.sourceforge.net/'
@@ -53,7 +53,7 @@ object dlgAbout: TdlgAbout
   object lblEmail: TLabel
     Left = 12
     Top = 104
-    Width = 120
+    Width = 105
     Height = 13
     Cursor = crHandPoint
     Caption = 'xiperware@gmail.com'
@@ -80,8 +80,7 @@ object dlgAbout: TdlgAbout
     Height = 25
     Caption = 'OK'
     Default = True
-    ModalResult = mrOk
+    ModalResult = 1
     TabOrder = 0
-    OnClick = btnOKClick
   end
 end

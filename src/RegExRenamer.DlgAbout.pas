@@ -1,4 +1,4 @@
-unit RegExRenamer.DlgAbout;
+﻿unit RegExRenamer.DlgAbout;
 
 interface
 
@@ -15,7 +15,6 @@ type
     lblStats: TLabel;
     btnOK: TButton;
     Bevel1: TBevel;
-    procedure btnOKClick(Sender: TObject);
     procedure lblHomepageClick(Sender: TObject);
     procedure lblEmailClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -43,11 +42,6 @@ begin
 
   lblStats.Caption := Format('RegExRenamer has been run %d %s and renamed a total of %d %s.',
     [ACountProgLaunches, sLaunches, ACountFilesRenamed, sFiles]);
-end;
-
-procedure TdlgAbout.btnOKClick(Sender: TObject);
-begin
-  Close;
 end;
 
 procedure TdlgAbout.lblHomepageClick(Sender: TObject);
